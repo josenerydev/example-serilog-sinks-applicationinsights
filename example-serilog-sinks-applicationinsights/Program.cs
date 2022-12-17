@@ -23,6 +23,7 @@ Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
     .Enrich.WithCorrelationIdHeader()
     .Enrich.WithProperty("Application", "example-serilog-sinks-applicationinsights")
+    .WriteTo.Async(wt => wt.Console())
     .WriteTo.ApplicationInsights(telemetryConfiguration, TelemetryConverter.Traces)
     .CreateBootstrapLogger();
 
@@ -38,6 +39,7 @@ try
         .Enrich.FromLogContext()
         .Enrich.WithCorrelationIdHeader()
         .Enrich.WithProperty("Application", "example-serilog-sinks-applicationinsights")
+        .WriteTo.Async(wt => wt.Console())
         .WriteTo.ApplicationInsights(telemetryConfiguration, TelemetryConverter.Traces));
 
     // Add services to the container.

@@ -43,7 +43,13 @@ try
 
     var app = builder.Build();
 
-    app.UseSerilogRequestLogging();
+    app.UseSerilogRequestLogging(options =>
+    {
+        options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+        {
+            diagnosticContext.Set("CorrelationId", guid);
+        };
+    });
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())

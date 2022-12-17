@@ -1,3 +1,4 @@
+using example_serilog_sinks_applicationinsights.Services;
 using Microsoft.ApplicationInsights.Extensibility;
 using Serilog;
 using System.Reflection;
@@ -34,6 +35,7 @@ try
         .WriteTo.ApplicationInsights(telemetryConfiguration, TelemetryConverter.Traces));
 
     // Add services to the container.
+    builder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();
 
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -64,13 +66,11 @@ try
 
     app.MapControllers();
 
-    //throw new Exception($"Exception for test {guid}");
-
     app.Run();
 }
 catch (Exception ex)
 {
-    Log.Fatal(ex, "Application terminated unexpectedly {0}", guid);
+    Log.Fatal(ex, "Application terminated unexpectedly");
 }
 finally
 {

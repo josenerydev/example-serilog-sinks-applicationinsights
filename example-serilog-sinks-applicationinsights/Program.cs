@@ -1,21 +1,12 @@
 using example_serilog_sinks_applicationinsights.Extensions.Hosting;
 using example_serilog_sinks_applicationinsights.Services;
 using Serilog;
-using System.Reflection;
 
-var configuration = new ConfigurationBuilder()
-        .SetBasePath(Directory.GetCurrentDirectory())
-        .AddJsonFile("appsettings.json")
-        .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", true)
-        .AddUserSecrets(Assembly.GetExecutingAssembly(), false)
-        .AddEnvironmentVariables()
-        .Build();
+var configuration = PreconfigureSerilogHostBuilderExtensions.CreatePreconfigureConfigurationBuilder();
 
 var guid = Guid.NewGuid().ToString().Substring(0, 4);
 
-Log.Logger = new LoggerConfiguration()
-    .PreconfigureLogger(configuration)
-    .CreateBootstrapLogger();
+Log.Logger = PreconfigureSerilogHostBuilderExtensions.CreatePreconfigureBootstrapLogger(configuration);
 
 try
 {

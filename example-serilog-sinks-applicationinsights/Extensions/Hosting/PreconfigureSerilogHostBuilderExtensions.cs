@@ -1,16 +1,36 @@
 ﻿using Microsoft.ApplicationInsights.Extensibility;
 using Serilog;
+using Serilog.Extensions.Hosting;
+using System.Reflection;
 
 namespace example_serilog_sinks_applicationinsights.Extensions.Hosting
 {
     public static class PreconfigureSerilogHostBuilderExtensions
     {
+        public static IConfigurationRoot CreatePreconfigureConfigurationBuilder()
+        {
+            return new ConfigurationBuilder()
+                 .SetBasePath(Directory.GetCurrentDirectory())
+                 .AddJsonFile("appsettings.json")
+                 .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", true)
+                 .AddUserSecrets(Assembly.GetExecutingAssembly(), false)
+                 .AddEnvironmentVariables()
+                 .Build();
+        }
+
         public static IHostBuilder UsePreconfigureSerilog(this IHostBuilder builder, IConfiguration configuration)
         {
             return builder.UseSerilog((context, services, loggerConfiguration) => loggerConfiguration
                 .ReadFrom.Configuration(context.Configuration)
                 .ReadFrom.Services(services)
                 .DefaultLoggerConfiguration(configuration));
+        }
+
+        public static ReloadableLogger CreatePreconfigureBootstrapLogger(IConfiguration configuration)
+        {
+            return new LoggerConfiguration()
+                .PreconfigureLogger(configuration)
+                .CreateBootstrapLogger();
         }
 
         public static LoggerConfiguration PreconfigureLogger(this LoggerConfiguration loggerConfiguration, IConfiguration configuration)

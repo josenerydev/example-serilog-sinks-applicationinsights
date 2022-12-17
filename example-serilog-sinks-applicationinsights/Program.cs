@@ -20,6 +20,9 @@ var telemetryConfiguration = new TelemetryConfiguration
 
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(configuration)
+    .Enrich.FromLogContext()
+    .Enrich.WithCorrelationIdHeader()
+    .Enrich.WithProperty("Application", "example-serilog-sinks-applicationinsights")
     .WriteTo.ApplicationInsights(telemetryConfiguration, TelemetryConverter.Traces)
     .CreateBootstrapLogger();
 
@@ -32,6 +35,9 @@ try
     builder.Host.UseSerilog((context, services, loggerConfiguration) => loggerConfiguration
         .ReadFrom.Configuration(context.Configuration)
         .ReadFrom.Services(services)
+        .Enrich.FromLogContext()
+        .Enrich.WithCorrelationIdHeader()
+        .Enrich.WithProperty("Application", "example-serilog-sinks-applicationinsights")
         .WriteTo.ApplicationInsights(telemetryConfiguration, TelemetryConverter.Traces));
 
     // Add services to the container.
@@ -49,7 +55,8 @@ try
     {
         options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
         {
-            diagnosticContext.Set("CorrelationId", guid);
+            diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
+            diagnosticContext.Set("RequestScheme", httpContext.Request.Scheme);
         };
     });
 

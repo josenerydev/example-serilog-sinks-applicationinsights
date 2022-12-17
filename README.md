@@ -1,0 +1,1 @@
+# example-serilog-sinks-applicationinsights

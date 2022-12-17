@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>example_serilog_sinks_applicationinsights</RootNamespace>
+    <ApplicationInsightsResourceId>/subscriptions/f71f381c-b3b0-4346-969c-24d740d165d7/resourceGroups/rg-tests/providers/microsoft.insights/components/ai-test</ApplicationInsightsResourceId>
+    <UserSecretsId>de2a2bf2-392a-4541-84bd-8a0ff0cea144</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+</Project>

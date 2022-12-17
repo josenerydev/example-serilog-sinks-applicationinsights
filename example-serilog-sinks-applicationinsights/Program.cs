@@ -1,5 +1,5 @@
+using example_serilog_sinks_applicationinsights.Extensions.Hosting;
 using example_serilog_sinks_applicationinsights.Services;
-using Microsoft.ApplicationInsights.Extensibility;
 using Serilog;
 using System.Reflection;
 
@@ -13,18 +13,8 @@ var configuration = new ConfigurationBuilder()
 
 var guid = Guid.NewGuid().ToString().Substring(0, 4);
 
-var telemetryConfiguration = new TelemetryConfiguration
-{
-    ConnectionString = configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]
-};
-
 Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(configuration)
-    .Enrich.FromLogContext()
-    .Enrich.WithCorrelationIdHeader()
-    .Enrich.WithProperty("Application", "example-serilog-sinks-applicationinsights")
-    .WriteTo.Async(wt => wt.Console())
-    .WriteTo.ApplicationInsights(telemetryConfiguration, TelemetryConverter.Traces)
+    .PreconfigureLogger(configuration)
     .CreateBootstrapLogger();
 
 try
@@ -33,14 +23,7 @@ try
 
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Host.UseSerilog((context, services, loggerConfiguration) => loggerConfiguration
-        .ReadFrom.Configuration(context.Configuration)
-        .ReadFrom.Services(services)
-        .Enrich.FromLogContext()
-        .Enrich.WithCorrelationIdHeader()
-        .Enrich.WithProperty("Application", "example-serilog-sinks-applicationinsights")
-        .WriteTo.Async(wt => wt.Console())
-        .WriteTo.ApplicationInsights(telemetryConfiguration, TelemetryConverter.Traces));
+    builder.Host.UsePreconfigureSerilog(configuration);
 
     // Add services to the container.
     builder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();

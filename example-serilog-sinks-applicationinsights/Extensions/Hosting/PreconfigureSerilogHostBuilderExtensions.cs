@@ -20,10 +20,17 @@ namespace example_serilog_sinks_applicationinsights.Extensions.Hosting
 
         public static IHostBuilder UsePreconfigureSerilog(this IHostBuilder builder, IConfiguration configuration)
         {
-            return builder.UseSerilog((context, services, loggerConfiguration) => loggerConfiguration
+            var host = builder.UseSerilog((context, services, loggerConfiguration) => loggerConfiguration
                 .ReadFrom.Configuration(context.Configuration)
                 .ReadFrom.Services(services)
                 .DefaultLoggerConfiguration(configuration));
+
+            host.ConfigureServices(services =>
+            {
+                services.AddApplicationInsightsTelemetry();
+            });
+
+            return host;
         }
 
         public static ReloadableLogger CreatePreconfigureBootstrapLogger(IConfiguration configuration)
